@@ -15,6 +15,7 @@ import com.socyno.base.bscsqlutil.AbstractDao;
 public class PropertyPlaceholderLoader extends PreferencesPlaceholderConfigurer {
     
     private String propertiesFile = "init.properties";
+    private static String appName;
     private static AbstractDao baseDataSource;
     private static ConfigService configService;
     
@@ -30,12 +31,20 @@ public class PropertyPlaceholderLoader extends PreferencesPlaceholderConfigurer 
         baseDataSource = db;
     }
     
+    synchronized public void setAppName(String name) {
+        appName = name;
+    }
+    
     public static AbstractDao getBaseDataSource() {
         return baseDataSource;
     }
     
     public static ConfigService getConfigService() {
         return configService;
+    }
+    
+    public static String getAppName() {
+        return appName;
     }
     
     @Override

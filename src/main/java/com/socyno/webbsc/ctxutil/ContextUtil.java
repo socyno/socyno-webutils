@@ -32,6 +32,10 @@ public class ContextUtil {
         return srv != null;
     }
     
+    public static String getAppName() {
+        return PropertyPlaceholderLoader.getAppName();
+    }
+    
     private static ConfigService getConfigService() {
         return PropertyPlaceholderLoader.getConfigService();
     }
