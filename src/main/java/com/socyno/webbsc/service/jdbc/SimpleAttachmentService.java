@@ -4,6 +4,7 @@ import java.net.URLEncoder;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -19,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import com.socyno.base.bscmixutil.CommonUtil;
+import com.socyno.base.bscmixutil.ConvertUtil;
 import com.socyno.base.bscmixutil.StringUtils;
 import com.socyno.base.bscmodel.ObjectMap;
 import com.socyno.base.bscmodel.SessionContext;
@@ -271,7 +273,8 @@ public class SimpleAttachmentService {
     /**
      * SELECT
      *     a.*,
-     *     f.form_id
+     *     f.form_id,
+     *     f.form_name
      * FROM
      *     system_form_attachement f,
      *     system_common_attachement a
@@ -300,12 +303,17 @@ public class SimpleAttachmentService {
      */
     public List<SimpleAttachmentItem> queryByTargetFormFeild(String targetForm, String targetField,
             Object... targetIds) throws Exception {
+        return queryByTargetFormFeild(SimpleAttachmentItem.class, targetForm, targetField, targetIds);
+    }
+    
+    public <T extends SimpleAttachmentItem> List<T> queryByTargetFormFeild(Class<T> clazz, String targetForm,
+            String targetField, Object... targetIds) throws Exception {
         if (StringUtils.isBlank(targetForm) || StringUtils.isBlank(targetField) || targetIds == null
                 || targetIds.length <= 0) {
             return Collections.emptyList();
         }
         
-        return getDao().queryAsList(SimpleAttachmentItem.class,
+        return getDao().queryAsList(clazz,
                 String.format(SQL_QUERY_FORM_ATTACHEMENTS_BY_FORM, StringUtils.join("?", targetIds.length, ",")),
                 ArrayUtils.addAll(new Object[] { targetForm, targetField }, targetIds));
     }
@@ -356,12 +364,19 @@ public class SimpleAttachmentService {
     @Multiline
     private final static String SQL_QUERY_ATTACHMENTS_BY_IDS = "X";
     
-    public List<SimpleAttachmentItem> queryByIds(List<Long> ids) throws Exception {
-        if (ids == null || ids.size() <= 0) {
+    public List<SimpleAttachmentItem> queryByIds(Long... ids) throws Exception {
+        if (ids == null || (ids = ConvertUtil.asNonNullUniqueLongArray(ids)).length <= 0) {
             return Collections.emptyList();
         }
         return getDao().queryAsList(SimpleAttachmentItem.class,
-                String.format(SQL_QUERY_ATTACHMENTS_BY_IDS, StringUtils.join("?", ids.size(), ",")),
-                ids.toArray());
+                String.format(SQL_QUERY_ATTACHMENTS_BY_IDS, StringUtils.join("?", ids.length, ",")),
+                ids);
+    }
+    
+    public List<SimpleAttachmentItem> queryByIds(Collection<Long> ids) throws Exception {
+        if (ids == null || ids.size() <= 0) {
+            return Collections.emptyList();
+        }
+        return queryByIds(ids.toArray(new Long[0]));
     }
 }

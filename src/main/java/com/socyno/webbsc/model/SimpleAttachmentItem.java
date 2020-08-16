@@ -10,7 +10,7 @@ import lombok.Data;
 @Data
 public class SimpleAttachmentItem {
     @Attributes(title = "编号", readonly = true)
-    private long id;
+    private Long id;
     
     @Attributes(title = "分类", readonly = true)
     private String type;
@@ -19,13 +19,13 @@ public class SimpleAttachmentItem {
     private String field;
     
     @Attributes(title = "表单号", readonly = true)
-    private long formId;
+    private Long formId;
     
     @Attributes(title = "名称", position = 10, readonly = true)
     private String name;
     
     @Attributes(title = "大小", position = 20, readonly = true)
-    private long size;
+    private Long size;
     
     @Attributes(title = "添加者", readonly = true)
     private Long createdId;
